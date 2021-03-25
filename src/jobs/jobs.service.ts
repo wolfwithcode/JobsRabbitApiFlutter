@@ -4,13 +4,14 @@ const axios = require('axios');
 @Injectable()
 export class JobsService {
   private jobs = ['kitchen hand', 'IT'];
-  async getAllJobs() {
+  async getManyJobs(start, limit) {
+
     try {
       const data = JSON.stringify({
         query: `
         # Write your query or mutation here
         query {
-          jobs {
+            jobs( start: ${start} limit:${limit}  ){
             id
             state
             city
@@ -64,10 +65,12 @@ export class JobsService {
       };
 
       const {
-        data: { data: jobs },
+        data: { data: {jobs} },
       } = await axios(config);
       console.log(jobs);
-      return jobs;
+      const {data: count } = await axios.get('https://jobsrabbitstrapidev.herokuapp.com/jobs/count')
+      console.log(count);
+      return {count, jobs};
     } catch (error) {
       console.log(error);
     }
