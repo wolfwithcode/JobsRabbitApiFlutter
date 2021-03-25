@@ -64,10 +64,10 @@ export class JobsService {
       };
 
       const {
-        data: { data: applications },
+        data: { data: jobs },
       } = await axios(config);
-      console.log(applications);
-      return applications;
+      console.log(jobs);
+      return jobs;
     } catch (error) {
       console.log(error);
     }
