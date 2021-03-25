@@ -8,29 +8,48 @@ export class JobsService {
     try {
       const data = JSON.stringify({
         query: `
-                  query{
-                      applications{
-                      id
-                      createdAt
-                      updatedAt
-                      job
-                      {
-                          id
-                          title
-                          description
-                          phone
-                          salary
-                          salaryCategory{
-                          title
-                          }
-                      }
-                      employee{
-                          phone
-                          isVerified
-                          dealSalary
-                      }
-                      }
-                  }
+        # Write your query or mutation here
+        query {
+          jobs {
+            id
+            state
+            city
+            address
+            zipcode
+            email
+            salary
+            email
+            phone
+            description
+            title
+            createdAt
+            otherImages {
+              path
+            }
+            employer {
+              shopName
+              location {
+                city
+                state
+                address
+                zipCode
+              }
+            }
+            jobCategory {
+              type
+              title
+            }
+            subsciptionCategory {
+              type
+              title
+            }
+            template {
+              type
+              title
+            }
+          }
+        }
+        
             `,
         variables: {},
       });
