@@ -24,6 +24,7 @@
     "@nestjs/common": "^7.6.13",
     "@nestjs/core": "^7.6.13",
     "@nestjs/platform-express": "^7.6.13",
+    "algoliasearch": "^4.8.6",
     "apollo-boost": "^0.4.9",
     "axios": "^0.21.1",
     "graphql": "^15.5.0",

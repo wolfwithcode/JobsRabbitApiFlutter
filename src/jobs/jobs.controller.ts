@@ -17,6 +17,15 @@ export class JobsController {
     return this.jobsService.createJob(body);
   }
 
+
+  @Get('/search')
+  searchJob(@Query() query){
+    console.log("keyword query", query)
+    const {keyword} = query;
+    
+    return  keyword ? this.jobsService.searchJobs(keyword) : {};
+  }
+
   @Get(':id')
   getJobById(@Param('id') id: string){
     // console.log("id Param", id)
