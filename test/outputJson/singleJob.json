@@ -1,0 +1,39 @@
+{
+	"id": "604d826095c7d03ae646eba1",
+	"state": "California",
+	"city": "Long Beach",
+	"address": "511 W. Willow St.",
+	"zipcode": 90806,
+	"email": "",
+	"salary": 0,
+	"phone": 7148372,
+	"description": "Tiệm Phở cần Nam bếp phở phải có kinh nghiệm làm full-time. Nhận check. Gọi sau 2pm: A. Bình",
+	"title": "TIỆM PHỞ CẦN NAM BẾP PHỞ",
+	"createdAt": "2021-03-14T03:26:24.026Z",
+	"otherImages": [],
+	"employer": {
+		"id": "604632251fcc3454d0829517",
+		"shopName": "Luxury Nail",
+		"location": {
+			"zipCode": 30350,
+			"city": "Atlanta",
+			"state": "Georgia",
+			"address": "7513 Roswell Road"
+		}
+	},
+	"jobCategory": {
+		"id": "6038c4360626cc335a6ff2a6",
+		"type": "PART_TIME",
+		"title": "part time"
+	},
+	"subsciptionCategory": {
+		"id": "6038c64d09662c34b493313f",
+		"type": "FREE",
+		"title": "free"
+	},
+	"template": {
+		"id": "604d73a449663a2f9faf7fcd",
+		"type": "PAID",
+		"title": "paid"
+	}
+}
