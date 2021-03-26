@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 
 @Controller('jobs')
@@ -17,9 +17,16 @@ export class JobsController {
     return this.jobsService.createJob(body);
   }
 
-  @Get('/:id')
+  @Get(':id')
   getJobById(@Param('id') id: string){
-    console.log("id Param", id)
+    // console.log("id Param", id)
     return this.jobsService.getJobById(id);
+  }
+
+  @Patch(':id')
+  updateJob(@Param('id') id: string, @Body() body){
+    console.log("id Param", id);
+    console.log("body Param", body);
+    return this.jobsService.updateJob(id, body);
   }
 }

@@ -144,4 +144,42 @@ export class JobsService {
       return job;
     } catch (error) {}
   }
+
+
+  async updateJob(id: string, body) {
+    try {
+      console.log('id', id);
+      const mutation = gql`
+      mutation UpdateSingleJob($id: ID!,$input: editJobInput){
+        updateJob(
+          input: {
+            where: { id: $id }
+            data: $input
+          }
+        ) {
+          job {
+            ...JobDetail
+          }
+        }
+      }
+        ${jobDetailFragment}
+      `;
+      const variables = {
+        id,
+        input: body
+      };
+
+      const {
+        data: {updateJob: {job}}
+      } = await client.mutate({ mutation, variables ,  update: (cache, mutationResult) => {
+        console.log('mutationResult', mutationResult);
+      },});
+
+      console.log(job);
+      return job;
+    } catch (error) {}
+  }
+
+
+
 }
