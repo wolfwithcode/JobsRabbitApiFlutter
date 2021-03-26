@@ -3,51 +3,63 @@ const axios = require('axios');
 
 @Injectable()
 export class JobsService {
-//   private jobs = ['kitchen hand', 'IT'];
-  async createJob(jobInput){
-    console.log("jobInput", jobInput);
-    const query = `mutation{
-        createJob(input: {data: {title: ${JSON.stringify(jobInput.title || "unknown")}, email: ${JSON.stringify(jobInput.email)}, employer: ${JSON.stringify(jobInput.employer)}}}){
-          job{
+  //   private jobs = ['kitchen hand', 'IT'];
+  async createJob(jobInput) {
+    console.log('jobInput', jobInput);
+    const query = `mutation CreateJob($input: createJobInput){
+      createJob(input: $input){
+        job{
+          id
+          title
+          employer{
             id
-            title
-            employer{
-              id
-              shopName
-            }
+            shopName
           }
         }
-      }`
-        console.log("query ", query);
-    try {
-        const data = JSON.stringify({
-          query,
-          variables: {},
-        });
-  
-        const config = {
-          method: 'post',
-          url: 'https://jobsrabbitstrapidev.herokuapp.com/graphql',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        };
-  
-        const {
-          data: { data: {createJob: {job}} },
-        } = await axios(config);
-
-        // const response = await axios(config);
-        // console.log("response ", response);
-        return {...job};
-      } catch (error) {
-        console.log(error);
       }
-      
-  }
-  async getManyJobs(start, limit) {
+    }`;
+    const variables = {
+      input: {
+        data: {
+         ...jobInput
+        },
+      },
+    };
+    // console.log("query ", query);
+    try {
+      const data = JSON.stringify({
+        query,
+        variables,
+      });
 
+      const config = {
+        method: 'post',
+        url: 'https://jobsrabbitstrapidev.herokuapp.com/graphql',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: data,
+      };
+
+      const {
+        data: {
+          data: {
+            createJob: { job },
+          },
+        },
+      } = await axios(config);
+
+      // const response = await axios(config);
+      // console.log("response ", response);
+      return { ...job };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+
+  async getManyJobs(start, limit) {
     try {
       const data = JSON.stringify({
         query: `
@@ -107,15 +119,18 @@ export class JobsService {
       };
 
       const {
-        data: { data: {jobs} },
+        data: {
+          data: { jobs },
+        },
       } = await axios(config);
-    //   console.log(jobs);
-      const {data: count } = await axios.get('https://jobsrabbitstrapidev.herokuapp.com/jobs/count')
-    //   console.log(count);
-      return {count, jobs};
+      //   console.log(jobs);
+      const { data: count } = await axios.get(
+        'https://jobsrabbitstrapidev.herokuapp.com/jobs/count',
+      );
+      //   console.log(count);
+      return { count, jobs };
     } catch (error) {
       console.log(error);
     }
-    
   }
 }
