@@ -120,4 +120,28 @@ export class JobsService {
       console.log(error);
     }
   }
+
+  async getJobById(id: string) {
+    try {
+      console.log('id', id);
+      const query = gql`
+        query JobQuery($id: ID!) {
+          job(id: $id) {
+            ...JobDetail
+          }
+        }
+        ${jobDetailFragment}
+      `;
+      const variables = {
+        id,
+      };
+
+      const {
+        data: { job },
+      } = await client.query({ query, variables });
+
+      console.log(job);
+      return job;
+    } catch (error) {}
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 
 @Controller('jobs')
@@ -15,5 +15,11 @@ export class JobsController {
   createJob(@Body() body){
     console.log('body', body);
     return this.jobsService.createJob(body);
+  }
+
+  @Get('/:id')
+  getJobById(@Param('id') id: string){
+    console.log("id Param", id)
+    return this.jobsService.getJobById(id);
   }
 }
