@@ -11,16 +11,48 @@ const client = new ApolloClient({
 });
 
 const jobDetailFragment = gql`
-                          fragment JobDetail on Job{
-                                                    id
-                                                        title
-                                                        employer{
-                                                          id
-                                                          shopName
-                                                        }
-                                                    
-                                                  }
-                        `;
+  fragment JobDetail on Job {
+    id
+    state
+    city
+    address
+    zipcode
+    email
+    salary
+    phone
+    description
+    title
+    createdAt
+    otherImages {
+      path
+    }
+    employer {
+      id
+      shopName
+      location {
+        zipCode
+        city
+        state
+        address
+      }
+    }
+    jobCategory {
+      id
+      type
+      title
+    }
+    subsciptionCategory {
+      id
+      type
+      title
+    }
+    template {
+      id
+      type
+      title
+    }
+  }
+`;
 
 @Injectable()
 export class JobsService {
@@ -28,14 +60,14 @@ export class JobsService {
   async createJob(jobInput) {
     console.log('jobInput', jobInput);
     const mutation = gql`
-    mutation CreateJob($input: createJobInput){
-      createJob(input: $input){
-        job{
-         ...JobDetail
+      mutation CreateJob($input: createJobInput) {
+        createJob(input: $input) {
+          job {
+            ...JobDetail
+          }
         }
       }
-    }
-    ${jobDetailFragment}
+      ${jobDetailFragment}
     `;
     const variables = {
       input: {
@@ -66,102 +98,14 @@ export class JobsService {
 
   async getManyJobs(start, limit) {
     try {
-      const data = JSON.stringify({
-        query: `
-        # Write your query or mutation here
-        query {
-            jobs( start: ${start} limit:${limit}  ){
-            id
-            state
-            city
-            address
-            zipcode
-            email
-            salary
-            email
-            phone
-            description
-            title
-            createdAt
-            otherImages {
-              path
-            }
-            employer {
-              shopName
-              location {
-                city
-                state
-                address
-                zipCode
-              }
-            }
-            jobCategory {
-              type
-              title
-            }
-            subsciptionCategory {
-              type
-              title
-            }
-            template {
-              type
-              title
-            }
-          }
-        }
-        
-            `,
-        variables: {},
-      });
-
-      const config = {
-        method: 'post',
-        url: 'https://jobsrabbitstrapidev.herokuapp.com/graphql',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: data,
-      };
       const query = gql`{
-        jobs( start: ${start} limit:${limit}  ){
-        id
-        state
-        city
-        address
-        zipcode
-        email
-        salary
-        email
-        phone
-        description
-        title
-        createdAt
-        otherImages {
-          path
-        }
-        employer {
-          shopName
-          location {
-            city
-            state
-            address
-            zipCode
-          }
-        }
-        jobCategory {
-          type
-          title
-        }
-        subsciptionCategory {
-          type
-          title
-        }
-        template {
-          type
-          title
-        }
+        jobs( start: ${start} limit:${limit}){
+          ...JobDetail
       }
-    }`;
+      
+    }
+    ${jobDetailFragment}
+    `;
       const {
         data: { jobs },
       } = await client.query({ query });
