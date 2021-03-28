@@ -214,11 +214,11 @@ export class JobsService {
           'subsciptionCategory',
           'template',
         ],
-        hitsPerPage: 30,
+        hitsPerPage: 100,
       });
       const jobs = hits.map((hit) => {
         // console.log('hit', hit);
-        const obj = JSON.parse(JSON.stringify(hit) );
+        const obj = JSON.parse(JSON.stringify(hit));
         // const { state, title, city } = obj;
 
         const {
@@ -249,16 +249,91 @@ export class JobsService {
           employer: createSimpleEmployer(employer),
           description,
           jobCategory: createSimpRecord(jobCategory),
-          subsciptionCategory: createSimpRecord(
-            subsciptionCategory
-          ),
+          subsciptionCategory: createSimpRecord(subsciptionCategory),
           template: createSimpRecord(template),
         };
-
       });
 
+      return { count: jobs.length, jobs };
+    } catch (error) {
+      console.log('error ', error);
+    }
+  }
 
-      return {count: jobs.length, jobs }
+  async searchAndFilterJobs(query) {
+    console.log('searchAndFilterJobs(query)', query);
+    try {
+      const filters = query.zipcode
+        ? `zipcode:${query.zipcode}`
+        : '';
+      // const keyword = query.category;
+      const keyword = query.keyword || '';
+      const category = query.category || '';
+      const start = +query.start || 0;
+      const limit = +query.limit || 100;
+      const end = start + limit;
+      console.log('filters ', filters);
+      console.log('end ', end);
+      console.log('keyword ', keyword + ' ' + category);
+      console.log('filters ', filters);
+      const { hits } = await index.search(keyword + ' ' + category, {
+        filters,
+        attributesToRetrieve: [
+          'state',
+          'title',
+          'city',
+          'address',
+          'zipcode',
+          'email',
+          'salary',
+          'phone',
+          'description',
+          'employer',
+          'jobCategory',
+          'subsciptionCategory',
+          'template',
+        ],
+        hitsPerPage: 100,
+      });
+      const jobs = hits.slice(start, start + limit).map((hit) => {
+        // console.log('hit', hit);
+        const obj = JSON.parse(JSON.stringify(hit));
+        // const { state, title, city } = obj;
+
+        const {
+          state,
+          title,
+          city,
+          address,
+          zipcode,
+          email,
+          salary,
+          phone,
+          employer,
+          description,
+          jobCategory,
+          subsciptionCategory,
+          template,
+        } = obj;
+
+        return {
+          state,
+          title,
+          city,
+          address,
+          zipcode,
+          email,
+          salary,
+          phone,
+          employer: createSimpleEmployer(employer),
+          description,
+          jobCategory: createSimpRecord(jobCategory),
+          subsciptionCategory: createSimpRecord(subsciptionCategory),
+          template: createSimpRecord(template),
+        };
+      });
+
+      return { count: hits.length, jobs };
     } catch (error) {
       console.log('error ', error);
     }

@@ -14,6 +14,11 @@ const AdminApiKey = '3c83a143e5fec8411fcb0b48cede9323';
 const client = algoliasearch(ApplicationID, AdminApiKey);
 
 const index = client.initIndex('jobs');
+// index.setSettings({
+//   attributesForFaceting: [
+//     'zipcode' // or 'filterOnly(brand)' for filtering purposes only
+//   ]
+// })
 // index.clearObjects();
 
 // const jobsJSON = require('../input/jobs.json');
@@ -60,9 +65,15 @@ const createSimpRecord = (record) => {
   const { id, title, type } = record;
   return { id, title, type };
 };
-
+const filters = '';
+// const filters = 'zipcode:90156';
+const keyword = "";
+// const keyword = " nail";
+const start = 1;
+const limit = 5;
 index
-  .search('nail', {
+  .search(keyword, {
+    filters,
     attributesToRetrieve: [
       'state',
       'title',
@@ -81,10 +92,12 @@ index
     hitsPerPage: 50,
   })
   .then(({ hits }) => {
-    console.log(hits);
+    console.log(hits.length);
+    const shortHits = hits.slice(start, start+limit);
+    console.log("shortHits length", shortHits.length);
+    // console.log("shortHits ", shortHits);
 
-    
-    hits.map((hit) => {
+    shortHits.map((hit) => {
       const {
         state,
         title,
@@ -115,12 +128,8 @@ index
         employer: createSimpleEmployer(employer),
         description,
         jobCategory: createSimpRecord(jobCategory),
-        subsciptionCategory: createSimpRecord(
-          subsciptionCategory
-        ),
+        subsciptionCategory: createSimpRecord(subsciptionCategory),
         template: createSimpRecord(template),
       });
     });
-
-
   });

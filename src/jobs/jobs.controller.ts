@@ -6,11 +6,18 @@ export class JobsController {
   constructor(private jobsService: JobsService) {}
 
   @Get()
-  async getManyJobs(@Query() query) {
-      const {start, limit} = query
-    //   console.log('param start, limit ', start, limit)
-    return this.jobsService.getManyJobs(start || 0, limit || 100);
+  // async getManyJobs(@Query() query) {
+  //     const {start, limit} = query
+  //   //   console.log('param start, limit ', start, limit)
+  //   return this.jobsService.getManyJobs(start || 0, limit || 100);
+  // }
+  searchAndFilterJobs(@Query() query){
+    console.log("keyword query", query)
+    // const {keyword, zipcode, start, limit, category} = query;
+    
+    return  this.jobsService.searchAndFilterJobs(query);
   }
+
   @Post()
   createJob(@Body() body){
     console.log('body', body);

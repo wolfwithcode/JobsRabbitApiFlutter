@@ -27,6 +27,7 @@
     "algoliasearch": "^4.8.6",
     "apollo-boost": "^0.4.9",
     "axios": "^0.21.1",
+    "fuse.js": "^6.4.6",
     "graphql": "^15.5.0",
     "node-fetch": "^2.6.1",
     "reflect-metadata": "^0.1.13",
