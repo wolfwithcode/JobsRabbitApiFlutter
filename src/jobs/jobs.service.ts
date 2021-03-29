@@ -27,7 +27,7 @@ const indexFlexSearch = new FlexSearch({
   }
 });
 // console.log("docs", docs);
-// indexFlexSearch.add(docs);
+indexFlexSearch.add(docs.slice(0,1000));
 
 // const start = async () => {
 //   await indexFlexSearch.add(docs);
