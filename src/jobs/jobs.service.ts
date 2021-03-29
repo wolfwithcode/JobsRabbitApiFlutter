@@ -240,12 +240,12 @@ export class JobsService {
       const end = start + limit;
       // console.log('filters ', filters);
       console.log('end ', end);
-      console.log('keyword ', keyword + ' ' + category);
+      console.log('keyword + category', keyword + ' ' + category);
       // console.log('filters ', filters);
     //  console.log("results keyword, zipcode, category", keyword, zipcode, category)
 
       const results = indexFlexSearch.search(keyword, 100);
-      const filterResults = results.filter( result => !query.zipcode || result.zipcode==query.zipcode  );
+      const filterResults = results.filter( result => !query.zipcode || !result.zipcode || result.zipcode==query.zipcode  );
       // console.log("results ", results)
       return {count : filterResults.length, filterResults};
     } catch (error) {
