@@ -253,7 +253,7 @@ export class JobsService {
     }
   }
 
-  async searchAndFilterJobs(query) {
+  async searchWithAlgolia(query) {
     console.log('searchAndFilterJobs(query)', query);
     try {
       const filters = query.zipcode

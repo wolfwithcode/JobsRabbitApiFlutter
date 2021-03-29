@@ -11,11 +11,11 @@ export class JobsController {
   //   //   console.log('param start, limit ', start, limit)
   //   return this.jobsService.getManyJobs(start || 0, limit || 100);
   // }
-  searchAndFilterJobs(@Query() query){
+  searchWithAlgolia(@Query() query){
     console.log("keyword query", query)
     // const {keyword, zipcode, start, limit, category} = query;
     
-    return  this.jobsService.searchAndFilterJobs(query);
+    return  this.jobsService.searchWithAlgolia(query);
   }
 
   @Post()
