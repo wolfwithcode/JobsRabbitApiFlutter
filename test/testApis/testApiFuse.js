@@ -42,8 +42,8 @@ const options = {
 
 const fuse = new Fuse(list, options)
 
-const result = fuse.search('học sinh');
-const shortResult = result.slice(0, 3);
+const result = fuse.search('THỰC PHẨM');
+const shortResult = result.slice(0, 10);
 
-console.log("result ", result)
+// console.log("result ", result)
 console.log("shortResult ", shortResult)

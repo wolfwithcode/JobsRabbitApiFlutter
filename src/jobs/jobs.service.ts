@@ -3,6 +3,39 @@ import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost';
 import gql from 'graphql-tag';
 import fetch from 'node-fetch';
 import algoliasearch from 'algoliasearch';
+// import  FlexSearch from "flexsearch";
+const FlexSearch = require("flexsearch");
+
+// const docs = require('./jobs.json')
+// import docs from './jobs.json'
+import * as docs  from './jobs.json'
+
+
+console.log("docs MOCKED_RESPONSE ", docs.length)
+const indexFlexSearch = new FlexSearch({
+  encode: "extra",
+  tokenize: "strict",
+  threshold: 1,
+  resolution: 9,
+  depth: 4,
+  doc: {
+      id: "id",
+      field: [
+          "title",
+          "description",
+      ]
+  }
+});
+// console.log("docs", docs);
+indexFlexSearch.add(docs);
+
+// const start = async () => {
+//   await indexFlexSearch.add(docs);
+// }
+
+// start()
+
+
 const ApplicationID = 'NRJXAFBP4P';
 const AdminApiKey = '3c83a143e5fec8411fcb0b48cede9323';
 const clientAlgoliaSearch = algoliasearch(ApplicationID, AdminApiKey);
@@ -196,65 +229,25 @@ export class JobsService {
     } catch (error) {}
   }
 
-  async searchJobs(keyword: string) {
+  async searchJobsWithFlexSearch(query) {
     try {
-      const { hits } = await index.search(keyword, {
-        attributesToRetrieve: [
-          'state',
-          'title',
-          'city',
-          'address',
-          'zipcode',
-          'email',
-          'salary',
-          'phone',
-          'description',
-          'employer',
-          'jobCategory',
-          'subsciptionCategory',
-          'template',
-        ],
-        hitsPerPage: 100,
-      });
-      const jobs = hits.map((hit) => {
-        // console.log('hit', hit);
-        const obj = JSON.parse(JSON.stringify(hit));
-        // const { state, title, city } = obj;
+      console.log("query ", query)
+    //  const {keyword, zipcode, category} = query;
+     const keyword = query.keyword || '';
+      const category = query.category || '';
+      const start = +query.start || 0;
+      const limit = +query.limit || 100;
+      const end = start + limit;
+      // console.log('filters ', filters);
+      console.log('end ', end);
+      console.log('keyword ', keyword + ' ' + category);
+      // console.log('filters ', filters);
+    //  console.log("results keyword, zipcode, category", keyword, zipcode, category)
 
-        const {
-          state,
-          title,
-          city,
-          address,
-          zipcode,
-          email,
-          salary,
-          phone,
-          employer,
-          description,
-          jobCategory,
-          subsciptionCategory,
-          template,
-        } = obj;
-
-        return {
-          state,
-          title,
-          city,
-          address,
-          zipcode,
-          email,
-          salary,
-          phone,
-          employer: createSimpleEmployer(employer),
-          description,
-          jobCategory: createSimpRecord(jobCategory),
-          subsciptionCategory: createSimpRecord(subsciptionCategory),
-          template: createSimpRecord(template),
-        };
-      });
-
-      return { count: jobs.length, jobs };
+      const results = indexFlexSearch.search(keyword, 100);
+      const filterResults = results.filter( result => !query.zipcode || result.zipcode==query.zipcode  );
+      // console.log("results ", results)
+      return {count : filterResults.length, filterResults};
     } catch (error) {
       console.log('error ', error);
     }

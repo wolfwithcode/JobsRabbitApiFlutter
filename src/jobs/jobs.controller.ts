@@ -28,9 +28,9 @@ export class JobsController {
   @Get('/search')
   searchJob(@Query() query){
     console.log("keyword query", query)
-    const {keyword} = query;
+    // const {keyword} = query;
     
-    return  keyword ? this.jobsService.searchJobs(keyword) : {};
+    return  this.jobsService.searchJobsWithFlexSearch(query);
   }
 
   @Get(':id')
