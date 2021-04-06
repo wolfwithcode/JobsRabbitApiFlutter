@@ -59,6 +59,11 @@ const jobDetailFragment = gql`
     zipcode
     email
     salary
+    salaryCategory{
+      id
+      title
+      type
+    }
     phone
     description
     title
@@ -279,6 +284,7 @@ export class JobsService {
           'zipcode',
           'email',
           'salary',
+          'salaryCategory',
           'phone',
           'description',
           'employer',
@@ -292,7 +298,8 @@ export class JobsService {
         // console.log('hit', hit);
         const obj = JSON.parse(JSON.stringify(hit));
         // const { state, title, city } = obj;
-
+        // console.log('hit obj', obj);
+        // console.log('hit objsalaryCategory:', obj.salaryCategory);
         const {
           state,
           title,
@@ -301,6 +308,7 @@ export class JobsService {
           zipcode,
           email,
           salary,
+          salaryCategory,
           phone,
           employer,
           description,
@@ -317,6 +325,7 @@ export class JobsService {
           zipcode,
           email,
           salary,
+          salaryCategory: createSimpRecord(salaryCategory),
           phone,
           employer: createSimpleEmployer(employer),
           description,
