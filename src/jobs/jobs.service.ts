@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost';
 import gql from 'graphql-tag';
 import fetch from 'node-fetch';
@@ -9,6 +9,7 @@ const FlexSearch = require("flexsearch");
 // const docs = require('./jobs.json')
 // import docs from './jobs.json'
 import * as docs  from './jobs.json'
+import { SearchService } from 'src/search/search.service';
 
 
 console.log("docs MOCKED_RESPONSE ", docs.length)
@@ -110,6 +111,12 @@ const createSimpRecord = (record) => {
 
 @Injectable()
 export class JobsService {
+
+
+  constructor(  
+    private readonly searchService: SearchService
+  ) {}
+
   //   private jobs = ['kitchen hand', 'IT'];
   async createJob(jobInput) {
     console.log('jobInput', jobInput);
@@ -150,6 +157,10 @@ export class JobsService {
     }
   }
 
+  async test(){
+    this.searchService.test();
+  }
+  
   async getManyJobs(start, limit) {
     try {
       const query = gql`{
