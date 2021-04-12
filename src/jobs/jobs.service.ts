@@ -287,22 +287,6 @@ export class JobsService {
       console.log('filters ', filters);
       const { hits } = await index.search(keyword + ' ' + category, {
         filters,
-        attributesToRetrieve: [
-          'state',
-          'title',
-          'city',
-          'address',
-          'zipcode',
-          'email',
-          'salary',
-          'salaryCategory',
-          'phone',
-          'description',
-          'employer',
-          'jobCategory',
-          'subsciptionCategory',
-          'template',
-        ],
         hitsPerPage: 100,
       });
       const jobs = hits.slice(start, start + limit).map((hit) => {
@@ -312,6 +296,7 @@ export class JobsService {
         // console.log('hit obj', obj);
         // console.log('hit objsalaryCategory:', obj.salaryCategory);
         const {
+          id,
           state,
           title,
           city,
@@ -329,6 +314,7 @@ export class JobsService {
         } = obj;
 
         return {
+          id,
           state,
           title,
           city,
