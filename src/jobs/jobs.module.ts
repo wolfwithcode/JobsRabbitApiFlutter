@@ -7,6 +7,6 @@ import { JobsService } from './jobs.service';
 @Module({
   imports: [SearchModule],
   controllers: [JobsController],
-  providers: [JobsService,SearchService]
+  providers: [JobsService]
 })
 export class JobsModule {}

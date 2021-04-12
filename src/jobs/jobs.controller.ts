@@ -23,7 +23,7 @@ export class JobsController {
       const {start, limit} = query
     //   console.log('param start, limit ', start, limit)
     // return this.jobsService.getManyJobs(start || 0, limit || 100);
-    this.jobsService.test();
+    return this.jobsService.test();
   }
 
   @Post()

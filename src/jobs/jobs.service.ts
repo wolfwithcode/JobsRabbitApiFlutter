@@ -158,9 +158,9 @@ export class JobsService {
   }
 
   async test(){
-    this.searchService.test();
+    return this.searchService.test();
   }
-  
+
   async getManyJobs(start, limit) {
     try {
       const query = gql`{

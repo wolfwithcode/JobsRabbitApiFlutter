@@ -8,22 +8,15 @@ export class SearchService {
 
   async test() {
    
-    const data = '';
-    
-    const config = {
-      method: 'get',
-      url: 'https://search-stbhcm-yrvycc33go65pgbmo33fmlqwhy.us-east-2.es.amazonaws.com/strapi_jobs/_search?q=anh',
-      headers: { },
-      data : data
-    };
-    
-    axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
+     const { body } = await this.elasticsearchService.search({
+      index: 'strapi_jobs',
+      body: {
+        "query": {
+            "match_all": {}
+          }
+      }
     })
-    .catch(function (error) {
-      console.log(error);
-    });
-    
+    const hits = body.hits.hits;
+    return hits.map((item) => item._source);
   }
 }
