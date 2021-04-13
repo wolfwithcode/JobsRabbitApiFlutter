@@ -5,25 +5,25 @@ import { JobsService } from './jobs.service';
 export class JobsController {
   constructor(private jobsService: JobsService) {}
 
-  @Get()
-  // async getManyJobs(@Query() query) {
-  //     const {start, limit} = query
-  //   //   console.log('param start, limit ', start, limit)
-  //   return this.jobsService.getManyJobs(start || 0, limit || 100);
-  // }
-  searchWithAlgolia(@Query() query){
-    console.log("keyword query", query)
-    // const {keyword, zipcode, start, limit, category} = query;
+  // @Get()
+  // // async getManyJobs(@Query() query) {
+  // //     const {start, limit} = query
+  // //   //   console.log('param start, limit ', start, limit)
+  // //   return this.jobsService.getManyJobs(start || 0, limit || 100);
+  // // }
+  // searchWithAlgolia(@Query() query){
+  //   console.log("keyword query", query)
+  //   // const {keyword, zipcode, start, limit, category} = query;
     
-    return  this.jobsService.searchWithAlgolia(query);
-  }
+  //   return  this.jobsService.searchWithAlgolia(query);
+  // }
 
-  @Get('many')
-  async getManyJobs(@Query() query) {
+  @Get()
+  async searchWithElastic(@Query() query) {
       const {start, limit} = query
     //   console.log('param start, limit ', start, limit)
     // return this.jobsService.getManyJobs(start || 0, limit || 100);
-    return this.jobsService.test();
+    return this.jobsService.searchWithElastic(query);
   }
 
   @Post()
@@ -33,13 +33,13 @@ export class JobsController {
   }
 
 
-  @Get('/search')
-  searchJob(@Query() query){
-    console.log("keyword query", query)
-    // const {keyword} = query;
+  // @Get('/search')
+  // searchJob(@Query() query){
+  //   console.log("keyword query", query)
+  //   // const {keyword} = query;
     
-    return  this.jobsService.searchJobsWithFlexSearch(query);
-  }
+  //   return  this.jobsService.searchJobsWithFlexSearch(query);
+  // }
 
   @Get(':id')
   getJobById(@Param('id') id: string){

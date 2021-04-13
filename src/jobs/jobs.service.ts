@@ -3,39 +3,8 @@ import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost';
 import gql from 'graphql-tag';
 import fetch from 'node-fetch';
 import algoliasearch from 'algoliasearch';
-// import  FlexSearch from "flexsearch";
-const FlexSearch = require("flexsearch");
 
-// const docs = require('./jobs.json')
-// import docs from './jobs.json'
-import * as docs  from './jobs.json'
 import { SearchService } from 'src/search/search.service';
-
-
-console.log("docs MOCKED_RESPONSE ", docs.length)
-const indexFlexSearch = new FlexSearch({
-  encode: "extra",
-  tokenize: "strict",
-  threshold: 1,
-  resolution: 9,
-  depth: 4,
-  doc: {
-      id: "id",
-      field: [
-          "title",
-          "description",
-      ]
-  }
-});
-// console.log("docs", docs);
-indexFlexSearch.add(docs.slice(0,1000));
-
-// const start = async () => {
-//   await indexFlexSearch.add(docs);
-// }
-
-// start()
-
 
 const ApplicationID = 'NRJXAFBP4P';
 const AdminApiKey = '3c83a143e5fec8411fcb0b48cede9323';
@@ -45,7 +14,8 @@ const index = clientAlgoliaSearch.initIndex('jobs');
 
 const axios = require('axios');
 
-const endpointURL = 'https://jobsrabbitstrapidev.herokuapp.com/graphql';
+const endpointURL =
+  'https://jobs-rabbit-strapi-lxokm.ondigitalocean.app/graphql';
 const client = new ApolloClient({
   link: new HttpLink({ uri: endpointURL, fetch }),
   cache: new InMemoryCache({ addTypename: false }),
@@ -60,7 +30,7 @@ const jobDetailFragment = gql`
     zipcode
     email
     salary
-    salaryCategory{
+    salaryCategory {
       id
       title
       type
@@ -111,11 +81,7 @@ const createSimpRecord = (record) => {
 
 @Injectable()
 export class JobsService {
-
-
-  constructor(  
-    private readonly searchService: SearchService
-  ) {}
+  constructor(private readonly searchService: SearchService) {}
 
   //   private jobs = ['kitchen hand', 'IT'];
   async createJob(jobInput) {
@@ -157,8 +123,60 @@ export class JobsService {
     }
   }
 
-  async test(){
-    return this.searchService.test();
+  async searchWithElastic(query) {
+    console.log('query', query);
+    // const {start, limit, category, keyword, zipcode} = query;
+    const start = Number(query.start) || 0;
+    const limit = Number(query.limit) || 100;
+    const category = query.category || '';
+    const keyword = query.keyword || '';
+    const zipcode = Number(query.zipcode) || '';
+
+    console.log('query   ', start, limit, category, keyword);
+    const text = (category || '') + ' ' + (keyword || '');
+
+    const queryBuilder = !zipcode
+      ? {
+          from: 0,
+          size: 1000,
+          query: {
+            bool: {
+              should: [
+                { match: { title: text } },
+                { match: { description: text } },
+              ],
+            },
+          },
+        }
+      : {
+          from: 0,
+          size: 1000,
+          query: {
+            bool: {
+              should: [
+                { match: { title: text } },
+                { match: { description: text } },
+              ],
+              filter: [
+                {
+                  term: {
+                    zipcode: zipcode,
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+    const response = await this.searchService.search(queryBuilder);
+    // console.log(response.total)
+    // console.log(response.hits)
+    console.log('start + limit ', start + limit);
+    console.log('hits.length ', response.hits.length);
+    const jobs = response.hits
+      .map((item) => item._source)
+      .slice(start, start + limit);
+    return { count: response.hits.length, jobs };
   }
 
   async getManyJobs(start, limit) {
@@ -177,7 +195,7 @@ export class JobsService {
 
       console.log(jobs);
       const { data: count } = await axios.get(
-        'https://jobsrabbitstrapidev.herokuapp.com/jobs/count',
+        'https://jobs-rabbit-strapi-lxokm.ondigitalocean.app/jobs/count',
       );
       console.log(count);
       return { count, jobs };
@@ -245,36 +263,10 @@ export class JobsService {
     } catch (error) {}
   }
 
-  async searchJobsWithFlexSearch(query) {
-    try {
-      console.log("query ", query)
-    //  const {keyword, zipcode, category} = query;
-     const keyword = query.keyword || '';
-      const category = query.category || '';
-      const start = +query.start || 0;
-      const limit = +query.limit || 100;
-      const end = start + limit;
-      // console.log('filters ', filters);
-      console.log('end ', end);
-      console.log('keyword + category', keyword + ' ' + category);
-      // console.log('filters ', filters);
-    //  console.log("results keyword, zipcode, category", keyword, zipcode, category)
-
-      const results = indexFlexSearch.search(keyword, 100);
-      const filterResults = results.filter( result => !query.zipcode || !result.zipcode || result.zipcode==query.zipcode  );
-      // console.log("results ", results)
-      return {count : filterResults.length, filterResults};
-    } catch (error) {
-      console.log('error ', error);
-    }
-  }
-
   async searchWithAlgolia(query) {
     console.log('searchAndFilterJobs(query)', query);
     try {
-      const filters = query.zipcode
-        ? `zipcode:${query.zipcode}`
-        : '';
+      const filters = query.zipcode ? `zipcode:${query.zipcode}` : '';
       // const keyword = query.category;
       const keyword = query.keyword || '';
       const category = query.category || '';
