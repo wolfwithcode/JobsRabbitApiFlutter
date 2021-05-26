@@ -1,0 +1,1 @@
+git fetch; git checkout -B anhld origin/master;chmod +x ./scripts/*.*
