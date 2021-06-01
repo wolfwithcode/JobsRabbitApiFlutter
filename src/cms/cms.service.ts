@@ -1,8 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-const API_URL = 'https://jobsrabbitstrapidev.herokuapp.com';
-
-enum MESSAGE {
+import { config } from 'config';
+const {apiUrl: API_URL} = config().cms;
+console.log('API_URL ', API_URL)
+export enum MESSAGE {
   SUCCESS = 'success',
   FAILED = 'failed',
   NOT_FOUND = 'not found',
@@ -36,8 +38,13 @@ const createJobInput = (body) => {
 
 @Injectable()
 export class CmsService {
+  constructor(private configService: ConfigService){
+
+  }
   async findJobs(query) {
     try {
+      const API_URL = this.configService.get('API_URL');
+      console.log('API_URL ', API_URL)
       console.log('query ', query);
       const { _start, _limit } = query;
       const { data: jobs } = await axios.get(
@@ -65,6 +72,7 @@ export class CmsService {
 
   async findOneJob(id) {
     try {
+      const API_URL = this.configService.get('API_URL');
       console.log('id ', id);
 
       const { data: job } = await axios.get(`${API_URL}/jobs/${id}`);
@@ -87,6 +95,7 @@ export class CmsService {
 
   async createJob(body) {
     try {
+      const API_URL = this.configService.get('API_URL');
       const bodyParameters = createJobInput(body);
       // const bodyParameters = body;
       const response = await axios.post(`${API_URL}/jobs`, bodyParameters);
