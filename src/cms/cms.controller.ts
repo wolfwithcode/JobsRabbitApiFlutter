@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { CmsService } from './cms.service';
 
 @Controller('cms')
@@ -17,4 +17,11 @@ export class CmsController {
     // console.log("id Param", id)
     return this.cmsService.findOneJob(id);
   }
+
+  @Post('jobs')
+  createJob(@Body() body){
+    console.log('body', body);
+    return this.cmsService.createJob(body);
+  }
+
 }
